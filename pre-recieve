@@ -1,0 +1,16 @@
+#!/bin/sh
+
+while read oldrev newrev refname; do
+    echo $oldrev $newrev $refname >> /tmp/pre-receive-input
+done
+
+GIT_WORK_TREE=$(mktemp -d)
+export GIT_WORK_TREE
+git archive --format=tar $newrev | (cd $GIT_WORK_TREE && tar xf -)
+
+gitleaks detect --source="$GIT_WORK_TREE"
+if [ $? -ne 0 ]; then
+    echo "Secret leakage detected! Push rejected."
+    exit 1
+fi
+exit 0
