@@ -5,7 +5,7 @@ def sendTelegramNotification(String stage, String message) {
         def jsonPayload = """
         {
             "chat_id": "${TELEGRAM_CHAT_ID}",
-            "text": "Build - ${status}\nJob - '$JOB_NAME' ($BUILD_NUMBER) at stage '${stage}'\nCommit hash ${scmVars.GIT_COMMIT}\n\nMessage: ${message}"
+            "text": "Job - '$JOB_NAME' ($BUILD_NUMBER) at stage '${stage}'\nCommit hash ${scmVars.GIT_COMMIT}\n\nMessage: ${message}"
         }
         """
         httpRequest url: "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage",
@@ -33,6 +33,7 @@ pipeline {
                 script {
                     def status = sh(script: "gitleaks detect --source=. --verbose --no-git --redact > output.txt 2>&1", returnStatus: true)
                     def output = readFile('output.txt').trim()
+                    echo "${output}"
                     if (output.contains("leaks found")) {
                         sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     }
@@ -47,7 +48,6 @@ pipeline {
         always {
             script {
                 def status = currentBuild.result ?: 'SUCCESS'
-                echo "${status}"
                 if ("${status}" != 'SUCCESS') {
                     sendTelegramNotification("Post script", "Build failed with status: ${status}")
                 }
