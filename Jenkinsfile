@@ -31,11 +31,13 @@ pipeline {
         stage('Run GitLeaks') {
             steps {
                 script {
-                    def command = sh(script: 'gitleaks detect --source=. --verbose --no-git --redact', returnStdout: true, returnStatus: true).trim()
-                    echo "${command}"
-                    sendTelegramNotification("Run GitLeaks", "Test message")
-                    if (result.contains("leaks found")) {
+                    def status = sh(script: "gitleaks detect --source=. --verbose --no-git --redact > output.txt 2>&1", returnStatus: true)
+                    def output = readFile('output.txt').trim()
+                    if (output.contains("leaks found")) {
                         sendTelegramNotification("Run GitLeaks", "Leaks - found")
+                    }
+                    if (status != 0) {
+                        return "Leaks found"
                     }
                 }
             }
