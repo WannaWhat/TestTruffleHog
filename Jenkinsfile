@@ -40,7 +40,7 @@ pipeline {
                     echo "Remember string"
                     echo "$status"
                     if (status != 0) {
-                        return("Leaks found")
+                        error("Leaks found")
                     }
                 }
             }
