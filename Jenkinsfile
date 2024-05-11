@@ -31,8 +31,8 @@ pipeline {
         stage('Run GitLeaks') {
             steps {
                 script {
-                    def result = sh(script: 'docker run --rm -v $(pwd):/code zricethezav/gitleaks detect --source=/code --verbose --no-git --redact', returnStdout: true).trim()
-                    echo "${result}"
+                    def command = sh(script: 'docker run --rm -v $(pwd):/code zricethezav/gitleaks detect --source=/code --verbose --no-git --redact', returnStdout: true, returnStatus: true).trim()
+                    echo "${command}"
                     sendTelegramNotification("Run GitLeaks", "Test message")
                     if (result.contains("leaks found")) {
                         sendTelegramNotification("Run GitLeaks", "Leaks - found")
