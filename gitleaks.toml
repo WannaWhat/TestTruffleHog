@@ -1,0 +1,5 @@
+[whitelist]
+  description = "Exclude all contents in the .git directory"
+  regexes = [
+    '''\.git/.*'''
+  ]
