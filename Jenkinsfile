@@ -37,8 +37,10 @@ pipeline {
                     if (output.contains("leaks found")) {
                         sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     }
+                    echo "Remember string"
+                    echo "$status"
                     if (status != 0) {
-                        return "Leaks found"
+                        return("Leaks found")
                     }
                 }
             }
