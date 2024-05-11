@@ -24,6 +24,7 @@ pipeline {
             steps {
                 script {
                     sh 'whoami'
+                    sh 'ls'
                 }
             }
         }
