@@ -44,7 +44,7 @@ pipeline {
             script {
                 def status = currentBuild.result ?: 'SUCCESS'
                 echo "${status}"
-                if (status != 'SUCCESS') {
+                if ("${status}" != 'SUCCESS') {
                     sendTelegramNotification("Post script", "Build failed with status: ${status}")
                 }
             }
