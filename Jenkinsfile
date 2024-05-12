@@ -23,7 +23,7 @@ pipeline {
     }
     parameters {
         string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
-        string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
+        string(name: 'REGISTRY_URL', defaultValue: 'http://localhost:9001', description: 'Docker registry URL')
     }
     stages {
         stage('Run GitLeaks scan code on secrets') {
