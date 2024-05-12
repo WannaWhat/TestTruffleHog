@@ -19,7 +19,7 @@ def sendTelegramNotification(String stage, String message) {
 pipeline {
     agent any
     parameters {
-        string(imageName: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
+        string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
     }
     stages {
         stage('Run GitLeaks scan code on secrets') {
