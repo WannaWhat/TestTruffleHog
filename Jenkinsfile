@@ -19,7 +19,7 @@ def sendTelegramNotification(String stage, String message) {
 pipeline {
     agent any
     parameters {
-        string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image'),
+        string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
         string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
     }
     stages {
