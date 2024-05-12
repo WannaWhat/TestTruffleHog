@@ -23,7 +23,8 @@ pipeline {
     }
     parameters {
         string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
-        string(name: 'REGISTRY_URL', defaultValue: 'http://localhost:9001', description: 'Docker registry URL')
+        string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
+        string(name: 'REGISTRY_PROTOCOL', defaultValue: 'http://', description: 'Docker registry web protocol')
     }
     stages {
         stage('Run GitLeaks scan code on secrets') {
@@ -43,7 +44,7 @@ pipeline {
         stage("Login into docker registry") {
             steps {
                 script {
-                    docker.withRegistry("${params.REGISTRY_URL}", "${env.DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry("${REGISTRY_PROTOCOL}${params.REGISTRY_URL}", "${env.DOCKER_CREDENTIALS_ID}") {
                         echo 'Successfully logged in to Docker Registry'
                     }
                 }
