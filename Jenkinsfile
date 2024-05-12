@@ -18,7 +18,6 @@ def sendTelegramNotification(String stage, String message) {
 
 pipeline {
     agent any
-
     stages {
         stage('Run GitLeaks scan code on secrets') {
             steps {
@@ -36,7 +35,7 @@ pipeline {
         }
         stage("Build tmp_develop docker image") {
             steps {
-                script {}
+                script {
                     if (fileExists('Dockerfile')) {
                         docker.build("my-image:tmp_develop")
                     } else {
