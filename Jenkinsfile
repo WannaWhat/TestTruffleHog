@@ -18,6 +18,9 @@ def sendTelegramNotification(String stage, String message) {
 
 pipeline {
     agent any
+    parameters {
+        string(imageName: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
+    }
     stages {
         stage('Run GitLeaks scan code on secrets') {
             steps {
@@ -26,9 +29,9 @@ pipeline {
                     def output = readFile('output.txt').trim()
                     echo "${output}"
                     if (output.contains("no leaks found")) {
-                        return
+                        return "Leaks - found"
                     }
-                    sendTelegramNotification("Run GitLeaks", "Leaks - found")
+//                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     error("Leaks found")
                 }
             }
@@ -37,7 +40,7 @@ pipeline {
             steps {
                 script {
                     if (fileExists('Dockerfile')) {
-                        docker.build("my-image:tmp_develop")
+                        docker.build("${params.CONTAINER_NAME}:tmp_develop")
                     } else {
                         error("Dockerfile not found")
                     }
@@ -50,9 +53,11 @@ pipeline {
             script {
                 def status = currentBuild.result ?: 'SUCCESS'
                 if ("${status}" != 'SUCCESS') {
-                    sendTelegramNotification("Post script", "Build failed with status: ${status}")
+                    def error = currentBuild.rawBuild.getActions(hudson.model.CauseAction.class)[0].getCauses()[0].getShortDescription()
+                    sendTelegramNotification("Post script", "Build failed with error: ${error}")
+                } else {
+                    sendTelegramNotification("Post script", "Build completed with status: ${status}")
                 }
-                sendTelegramNotification("Post script", "Build completed with status: ${status}")
 
             }
         }
