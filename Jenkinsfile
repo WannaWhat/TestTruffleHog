@@ -19,7 +19,8 @@ def sendTelegramNotification(String stage, String message) {
 pipeline {
     agent any
     parameters {
-        string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
+        string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image'),
+        string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
     }
     stages {
         stage('Run GitLeaks scan code on secrets') {
@@ -44,6 +45,31 @@ pipeline {
                     } else {
                         error("Dockerfile not found")
                     }
+                }
+            }
+        }
+        stage("Retag develop docker image to lastwork_develop image") {
+            steps {
+                script {
+                    try {
+                        def originalImage = docker.image("${params.REGISTRY_URL}/${params.CONTAINER_NAME}:develop")
+                        originalImage.pull()
+                    } catch (Exception e) {
+                        sendTelegramNotification("Retag develop -> lastwork_develop", "No develop image - Skip")
+                        return
+                    }
+                    def newImage = originalImage.tag("${params.CONTAINER_NAME}:lastwork_develop")
+                    newImage.push()
+                }
+            }
+        }
+        stage("Retag tmp_develop docker image to develop image") {
+            steps {
+                script {
+                    def originalImage = docker.image("${params.REGISTRY_URL}/${params.CONTAINER_NAME}:tmp_develop")
+                    originalImage.pull()
+                    def newImage = originalImage.tag("${params.CONTAINER_NAME}:develop")
+                    newImage.push()
                 }
             }
         }
