@@ -18,6 +18,9 @@ def sendTelegramNotification(String stage, String message) {
 
 pipeline {
     agent any
+    environment {
+        DOCKER_CREDENTIAL_ID = 'DockerRegistryCred'
+    }
     parameters {
         string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
         string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
@@ -34,6 +37,15 @@ pipeline {
                     }
                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     error("Leaks found")
+                }
+            }
+        }
+        stage("Login into docker registry") {
+            steps {
+                script {
+                    docker.withRegistry("${params.REGISTRY_URL}", "${env.DOCKER_CREDENTIALS_ID}") {
+                        echo 'Successfully logged in to Docker Registry'
+                    }
                 }
             }
         }
