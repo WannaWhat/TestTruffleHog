@@ -1,4 +1,19 @@
-import tools.teleGramFunctions
+def sendTelegramNotification(String stage, String message) {
+    def scmVars = checkout scm
+    withCredentials([string(credentialsId: 'BotToken', variable: 'TELEGRAM_TOKEN'),
+                     string(credentialsId: 'TelegramChatID', variable: 'TELEGRAM_CHAT_ID')]) {
+        def jsonPayload = """
+        {
+            "chat_id": "${TELEGRAM_CHAT_ID}",
+            "text": "Job - '$JOB_NAME' ($BUILD_NUMBER) at stage '${stage}'\nCommit hash ${scmVars.GIT_COMMIT}\n\nMessage: ${message}"
+        }
+        """
+        httpRequest url: "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage",
+                    httpMode: 'POST',
+                    contentType: 'APPLICATION_JSON',
+                    requestBody: jsonPayload
+    }
+}
 
 
 pipeline {
@@ -21,8 +36,7 @@ pipeline {
                     if (output.contains("no leaks found")) {
                         return
                     }
-                    teleGramFunctions.sendTelegramNotification("Run GitLeaks", "Leaks - found")
-//                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
+                    sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     error("Leaks found")
                 }
             }
