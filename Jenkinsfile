@@ -54,6 +54,7 @@ pipeline {
                 def status = currentBuild.result ?: 'SUCCESS'
                 if ("${status}" != 'SUCCESS') {
                     def error = currentBuild.rawBuild.getActions(hudson.model.CauseAction.class)[0].getCauses()[0].getShortDescription()
+                    echo "${error}"
                     sendTelegramNotification("Post script", "Build failed with error: ${error}")
                 } else {
                     sendTelegramNotification("Post script", "Build completed with status: ${status}")
