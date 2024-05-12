@@ -19,7 +19,7 @@ def sendTelegramNotification(String stage, String message) {
 pipeline {
     agent any
     environment {
-        DOCKER_CREDENTIAL_ID = 'DockerRegistryCred'
+        DOCKER_CREDENTIALS_ID = 'DockerRegistryCred'
     }
     parameters {
         string(name: 'IMAGE_NAME', defaultValue: 'test_truffle_hog', description: 'Name of the Docker image')
