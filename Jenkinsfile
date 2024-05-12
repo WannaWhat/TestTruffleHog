@@ -36,10 +36,12 @@ pipeline {
         }
         stage("Build tmp_develop docker image") {
             steps {
-                if (fileExists('Dockerfile')) {
-                    docker.build("my-image:tmp_develop")
-                } else {
-                    error("Dockerfile not found")
+                script {}
+                    if (fileExists('Dockerfile')) {
+                        docker.build("my-image:tmp_develop")
+                    } else {
+                        error("Dockerfile not found")
+                    }
                 }
             }
         }
