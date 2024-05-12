@@ -29,9 +29,10 @@ pipeline {
                     def output = readFile('output.txt').trim()
                     echo "${output}"
                     if (output.contains("no leaks found")) {
-                        return "Leaks - found"
+                        return
                     }
 //                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
+                    return "Leaks - found"
                     error("Leaks found")
                 }
             }
