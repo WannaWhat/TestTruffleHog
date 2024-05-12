@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     if (fileExists('Dockerfile')) {
-                        docker.build("${params.CONTAINER_NAME}:tmp_develop")
+                        docker.build("${params.IMAGE_NAME}:tmp_develop")
                     } else {
                         error("Dockerfile not found")
                     }
@@ -64,13 +64,13 @@ pipeline {
             steps {
                 script {
                     try {
-                        def originalImage = docker.image("${params.REGISTRY_URL}/${params.CONTAINER_NAME}:develop")
+                        def originalImage = docker.image("${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop")
                         originalImage.pull()
                     } catch (Exception e) {
                         sendTelegramNotification("Retag develop -> lastwork_develop", "No develop image - Skip")
                         return
                     }
-                    def newImage = originalImage.tag("${params.CONTAINER_NAME}:lastwork_develop")
+                    def newImage = originalImage.tag("${params.IMAGE_NAME}:lastwork_develop")
                     newImage.push()
                 }
             }
@@ -78,9 +78,9 @@ pipeline {
         stage("Retag tmp_develop docker image to develop image") {
             steps {
                 script {
-                    def originalImage = docker.image("${params.REGISTRY_URL}/${params.CONTAINER_NAME}:tmp_develop")
+                    def originalImage = docker.image("${params.REGISTRY_URL}/${params.IMAGE_NAME}:tmp_develop")
                     originalImage.pull()
-                    def newImage = originalImage.tag("${params.CONTAINER_NAME}:develop")
+                    def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
                     newImage.push()
                 }
             }
