@@ -31,7 +31,7 @@ pipeline {
                     if (output.contains("no leaks found")) {
                         return
                     }
-//                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
+                    sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     error("Leaks found")
                 }
             }
@@ -53,9 +53,7 @@ pipeline {
             script {
                 def status = currentBuild.result ?: 'SUCCESS'
                 if ("${status}" != 'SUCCESS') {
-                    def error = currentBuild.rawBuild.getActions(hudson.model.CauseAction.class)[0].getCauses()[0].getShortDescription()
-                    echo "${error}"
-                    sendTelegramNotification("Post script", "Build failed with error: ${error}")
+                    sendTelegramNotification("Post script", "Build failed with status: ${status}")
                 } else {
                     sendTelegramNotification("Post script", "Build completed with status: ${status}")
                 }
