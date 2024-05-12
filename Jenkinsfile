@@ -49,6 +49,8 @@ pipeline {
                 if ("${status}" != 'SUCCESS') {
                     sendTelegramNotification("Post script", "Build failed with status: ${status}")
                 }
+                sendTelegramNotification("Post script", "Build completed with status: ${status}")
+
             }
         }
     }
