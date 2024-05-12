@@ -32,7 +32,6 @@ pipeline {
                         return
                     }
 //                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
-                    return "Leaks - found"
                     error("Leaks found")
                 }
             }
