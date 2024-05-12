@@ -33,15 +33,11 @@ pipeline {
                 script {
                     def status = sh(script: "gitleaks detect --source=. --verbose --no-git --redact > output.txt 2>&1", returnStatus: true)
                     def output = readFile('output.txt').trim()
-                    echo "${output}"
-                    if (output.contains("leaks found")) {
-                        sendTelegramNotification("Run GitLeaks", "Leaks - found")
+                    if (output.contains("no leaks found")) {
+                        return
                     }
-                    echo "Remember string"
-                    echo "$status"
-                    if (status != 0) {
-                        error("Leaks found")
-                    }
+                    sendTelegramNotification("Run GitLeaks", "Leaks - found")
+                    error("Leaks found")
                 }
             }
         }
