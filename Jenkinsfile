@@ -20,24 +20,26 @@ pipeline {
     agent any
 
     stages {
-        stage('Show echo') {
-            steps {
-                script {
-                    sh 'whoami'
-                    sh 'ls'
-                }
-            }
-        }
-        stage('Run GitLeaks') {
+        stage('Run GitLeaks scan code on secrets') {
             steps {
                 script {
                     def status = sh(script: "gitleaks detect --source=. --verbose --no-git --redact > output.txt 2>&1", returnStatus: true)
                     def output = readFile('output.txt').trim()
+                    echo "${output}"
                     if (output.contains("no leaks found")) {
                         return
                     }
                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     error("Leaks found")
+                }
+            }
+        }
+        stage("Build tmp_develop docker image") {
+            steps {
+                if (fileExists('Dockerfile')) {
+                    docker.build("my-image:tmp_develop")
+                } else {
+                    error("Dockerfile not found")
                 }
             }
         }
