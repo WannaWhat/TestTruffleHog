@@ -80,8 +80,8 @@ pipeline {
         stage("Retag tmp_develop docker image to develop image") {
             steps {
                 script {
-                    def originalImage = docker.image("${params.IMAGE_NAME}:tmp_develop")
                     echo "1 - ${params.IMAGE_NAME}:tmp_develop"
+                    def originalImage = docker.image("${params.IMAGE_NAME}:tmp_develop")
 //                     originalImage.pull()
                     def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
                     echo "2 - ${params.IMAGE_NAME}:develop"
