@@ -85,6 +85,7 @@ pipeline {
 //                     originalImage.pull()
                     echo "2 - ${params.IMAGE_NAME}:develop"
                     def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
+                    echo "3"
                     newImage.push()
                 }
             }
