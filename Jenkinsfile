@@ -67,6 +67,7 @@ pipeline {
                 script {
                     try {
                         def originalImage = docker.image("${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop")
+                        sh "DEBUG - 1"
                         originalImage.pull()
                     } catch (Exception e) {
                         sendTelegramNotification("Retag develop -> lastwork_develop", "No develop image - Skip")
