@@ -79,8 +79,8 @@ pipeline {
         stage("Retag tmp_develop docker image to develop image") {
             steps {
                 script {
-                    def originalImage = docker.image("${params.REGISTRY_URL}/${params.IMAGE_NAME}:tmp_develop")
-                    originalImage.pull()
+                    def originalImage = docker.image("${params.IMAGE_NAME}:tmp_develop")
+//                     originalImage.pull()
                     def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
                     newImage.push()
                 }
