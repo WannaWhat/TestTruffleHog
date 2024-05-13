@@ -65,7 +65,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        def originalImage = docker.image("http://${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop")
+                        def originalImage = docker.image("${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop")
                         originalImage.pull()
                     } catch (Exception e) {
                         sendTelegramNotification("Retag develop -> lastwork_develop", "No develop image - Skip")
@@ -79,7 +79,7 @@ pipeline {
         stage("Retag tmp_develop docker image to develop image") {
             steps {
                 script {
-                    def originalImage = docker.image("http://${params.REGISTRY_URL}/${params.IMAGE_NAME}:tmp_develop")
+                    def originalImage = docker.image("${params.REGISTRY_URL}/${params.IMAGE_NAME}:tmp_develop")
                     originalImage.pull()
                     def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
                     newImage.push()
