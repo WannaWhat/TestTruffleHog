@@ -84,7 +84,8 @@ pipeline {
                     def originalImage = docker.image("${params.IMAGE_NAME}:tmp_develop")
 //                     originalImage.pull()
                     echo "2 - ${params.IMAGE_NAME}:develop"
-                    def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
+//                     def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
+                    def newImage = originalImage.tag("workd:depl")
                     echo "3"
                     newImage.push()
                 }
