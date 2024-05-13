@@ -85,9 +85,11 @@ pipeline {
 //                     originalImage.pull()
                     echo "2 - ${params.IMAGE_NAME}:develop"
 //                     def newImage = originalImage.tag("${params.IMAGE_NAME}:develop")
-                    def newImage = originalImage.tag("workd:depl")
+//                     def newImage = originalImage.tag("workd:depl")
+                    sh "docker tag ${params.IMAGE_NAME}:tmp_develop localhost:9001/${params.IMAGE_NAME}:develop"
                     echo "3"
-                    newImage.push()
+                    sh "docker push localhost:9001/${params.IMAGE_NAME}:develop"
+//                     newImage.push()
                 }
             }
         }
