@@ -1,7 +1,5 @@
 
 
-
-
 def main():
     print("Hello")
 
