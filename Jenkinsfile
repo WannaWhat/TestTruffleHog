@@ -115,8 +115,10 @@ pipeline {
 //     Re-tag lastwork_develop to develop image to renew old build
         stage("Re-tag lastwork_develop to develop docker image") {
             when {
-                not expression {
-                    params.CLEAN_BUILD
+                not {
+                    expression {
+                        params.CLEAN_BUILD
+                    }
                 }
             }
             steps {
