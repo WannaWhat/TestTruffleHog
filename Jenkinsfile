@@ -130,7 +130,7 @@ pipeline {
                         sendTelegramNotification("Re-tag lstw_develop to develop", "No lastwork_develop image - found")
                         return
                     }
-                    sh "docker tag ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop"
+                    sh "docker tag ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop ${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop"
                     sh "docker push ${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop"
 
                 }
