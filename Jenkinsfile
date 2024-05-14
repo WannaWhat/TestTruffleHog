@@ -131,6 +131,8 @@ pipeline {
                         return
                     }
                     sh "docker tag ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop"
+                    sh "docker push ${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop"
+
                 }
             }
         }
