@@ -20,14 +20,20 @@ pipeline {
     agent any
     environment {
         DOCKER_CREDENTIALS_ID = 'DockerRegistryCred'
+        REGISTRY_PROTOCOL = 'http://'
     }
     parameters {
         string(name: 'IMAGE_NAME', defaultValue: 'testtrufflehog', description: 'Name of the Docker image')
         string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
-        string(name: 'REGISTRY_PROTOCOL', defaultValue: 'http://', description: 'Docker registry web protocol')
+        booleanParam(name: 'CLEAN_BUILD', defaultValue: false, description: 'Check here to perform new build')
     }
+
     stages {
+//     Scan code on secrets with GitLeaks
         stage('Run GitLeaks scan code on secrets') {
+            when {
+                params.CLEAN_BUILD
+            }
             steps {
                 script {
                     def status = sh(script: "gitleaks detect --source=. --verbose --no-git --redact > output.txt 2>&1", returnStatus: true)
@@ -38,10 +44,11 @@ pipeline {
                     }
                     sendTelegramNotification("Run GitLeaks", "Leaks - found")
                     error("Leaks found")
-
                 }
             }
         }
+
+//     Login into Docker registry
         stage("Login into docker registry") {
             steps {
                 script {
@@ -51,7 +58,12 @@ pipeline {
                 }
             }
         }
+
+//     Build tmp_develop docker image to check build status
         stage("Build tmp_develop docker image") {
+            when {
+                params.CLEAN_BUILD
+            }
             steps {
                 script {
                     if (fileExists('Dockerfile')) {
@@ -59,10 +71,16 @@ pipeline {
                     } else {
                         error("Dockerfile not found")
                     }
+
                 }
             }
         }
-        stage("Retag develop docker image to lastwork_develop image") {
+
+//     Re-tag old docker develop image to lastwork_develop image
+        stage("Re-tag develop docker image to lastwork_develop image") {
+            when {
+                params.CLEAN_BUILD
+            }
             steps {
                 script {
                     try {
@@ -75,11 +93,34 @@ pipeline {
                 }
             }
         }
-        stage("Retag tmp_develop docker image to develop image") {
+
+//     Re-tag tmp_develop docker image to develop image for future deploy
+        stage("Re-tag tmp_develop docker image to develop image") {
+            when {
+                params.CLEAN_BUILD
+            }
             steps {
                 script {
                     sh "docker tag ${params.IMAGE_NAME}:tmp_develop ${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop"
                     sh "docker push ${params.REGISTRY_URL}/${params.IMAGE_NAME}:develop"
+                }
+            }
+        }
+
+//     Re-tag lastwork_develop to develop image to renew old build
+        stage("Re-tag lastwork_develop to develop docker image") {
+            when {
+                params.CLEAN_BUILD
+            }
+            steps {
+                script {
+                    try {
+                        sh "docker pull ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop"
+                    } catch (Exception e) {
+                        sendTelegramNotification("Re-tag lstw_develop to develop", "No lastwork_develop image - found")
+                        return
+                    }
+                    sh "docker tag ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop ${params.REGISTRY_URL}/${params.IMAGE_NAME}:lastwork_develop"
                 }
             }
         }
