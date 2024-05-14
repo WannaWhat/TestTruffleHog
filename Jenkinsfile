@@ -25,7 +25,7 @@ pipeline {
     parameters {
         string(name: 'IMAGE_NAME', defaultValue: 'testtrufflehog', description: 'Name of the Docker image')
         string(name: 'REGISTRY_URL', defaultValue: 'localhost:9001', description: 'Docker registry URL')
-        booleanParam(name: 'CLEAN_BUILD', defaultValue: false, description: 'Check here to perform new build')
+        booleanParam(name: 'CLEAN_BUILD', defaultValue: true, description: 'Check here to perform new build')
     }
 
     stages {
