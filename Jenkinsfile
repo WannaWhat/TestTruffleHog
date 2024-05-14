@@ -53,7 +53,7 @@ pipeline {
         stage("Login into docker registry") {
             steps {
                 script {
-                    docker.withRegistry("${params.REGISTRY_PROTOCOL}${params.REGISTRY_URL}", "${env.DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry("${env.REGISTRY_PROTOCOL}${params.REGISTRY_URL}", "${env.DOCKER_CREDENTIALS_ID}") {
                         echo 'Successfully logged in to Docker Registry'
                     }
                 }
