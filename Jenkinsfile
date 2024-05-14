@@ -32,8 +32,9 @@ pipeline {
 //     Scan code on secrets with GitLeaks
         stage('Run GitLeaks scan code on secrets') {
             when {
-                params.CLEAN_BUILD
-            }
+                expression {
+                    params.CLEAN_BUILD
+                }            }
             steps {
                 script {
                     def status = sh(script: "gitleaks detect --source=. --verbose --no-git --redact > output.txt 2>&1", returnStatus: true)
@@ -62,8 +63,9 @@ pipeline {
 //     Build tmp_develop docker image to check build status
         stage("Build tmp_develop docker image") {
             when {
-                params.CLEAN_BUILD
-            }
+                expression {
+                    params.CLEAN_BUILD
+                }            }
             steps {
                 script {
                     if (fileExists('Dockerfile')) {
@@ -79,8 +81,9 @@ pipeline {
 //     Re-tag old docker develop image to lastwork_develop image
         stage("Re-tag develop docker image to lastwork_develop image") {
             when {
-                params.CLEAN_BUILD
-            }
+                expression {
+                    params.CLEAN_BUILD
+                }            }
             steps {
                 script {
                     try {
@@ -97,7 +100,9 @@ pipeline {
 //     Re-tag tmp_develop docker image to develop image for future deploy
         stage("Re-tag tmp_develop docker image to develop image") {
             when {
-                params.CLEAN_BUILD
+                expression {
+                    params.CLEAN_BUILD
+                }
             }
             steps {
                 script {
@@ -110,7 +115,9 @@ pipeline {
 //     Re-tag lastwork_develop to develop image to renew old build
         stage("Re-tag lastwork_develop to develop docker image") {
             when {
-                params.CLEAN_BUILD
+                expression {
+                    params.CLEAN_BUILD
+                }
             }
             steps {
                 script {
